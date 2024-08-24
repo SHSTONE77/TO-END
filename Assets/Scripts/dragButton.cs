@@ -23,6 +23,10 @@ public class dragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     // 드래그 중
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
+
+        //test
+        Debug.Log("sdf");
+
     	transform.position = eventData.position;
     }
 	
