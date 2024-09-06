@@ -37,7 +37,7 @@ public class button_onclick : MonoBehaviour
         player.stat.maxHp -= 10;
     }
     public void StartGame() {
-        ScreenManager.StartGame(playerCode);
+        ScreenManager.StartGame();
     }
 
 }

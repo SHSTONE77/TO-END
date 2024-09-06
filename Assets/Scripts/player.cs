@@ -25,14 +25,13 @@ public class player : MonoBehaviour
     int curDir;
 
     public GameManager game_manager;
-    public ScreenManager screen_manager;
 
     //실행 시 호출
     void Start()
     {
         animator = gameObject.GetComponent<Animator>();
-        Debug.Log(screen_manager.playerCode);
-        switch(screen_manager.playerCode){
+        Debug.Log(ScreenManager.instance.playerCode);
+        switch(ScreenManager.instance.playerCode){
             case 1 :    //척무진
                 unitCode = unitCode.warrior;
                 animator.runtimeAnimatorController = anim_warrior;

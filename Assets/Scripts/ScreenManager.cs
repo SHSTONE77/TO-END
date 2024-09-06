@@ -20,8 +20,7 @@ public class ScreenManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public static void StartGame(int code) {
-        instance.playerCode = code;
+    public static void StartGame() {
         SceneManager.LoadScene("play_scene");
     }
 }
