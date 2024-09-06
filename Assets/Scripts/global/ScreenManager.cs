@@ -26,7 +26,11 @@ public class ScreenManager : MonoBehaviour
         SceneManager.LoadScene("play_scene");
     }
 
-    public static void player2skill() {
+    public static void play2skill() {
         SceneManager.LoadScene("skill_scene");
+    }
+
+    public static void skill2play() {
+        SceneManager.LoadScene("play_scene");
     }
 }
