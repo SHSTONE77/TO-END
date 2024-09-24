@@ -43,8 +43,9 @@ public class player : MonoBehaviour
     {
         //테스트용으로 스페이스, q, e로 설정
         keySet[0] = KeyCode.Space;
-        keySet[1] = KeyCode.Q;
+        keySet[1] = KeyCode.Mouse0; //플레이어 기본 공격
         keySet[2] = KeyCode.E;
+        keySet[3] = KeyCode.Q;
 
         animator = gameObject.GetComponent<Animator>();
         Debug.Log(screen_manager.playerCode);
@@ -87,7 +88,12 @@ public class player : MonoBehaviour
         /*** 텔레포트 시작 ***/
         if (Input.GetKey(keySet[0])){
             playerSkill.useSkill(skillMap[0]);
-        }  
+        }
+
+        /*** 기본 공격 ***/
+        if (Input.GetKey(keySet[1])) {
+            playerSkill.useSkill(skillMap[1]);
+        }
     }
 
     //Fixed Timestep에 따라 일정한 간격으로 호출
