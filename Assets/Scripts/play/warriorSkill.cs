@@ -16,9 +16,8 @@ public class warriorSkill : MonoBehaviour, playerMove
     private void Start() {
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
-        Player.skillMap.Add(0, "teleport");  //keyset의 인덱스 0번을 텔레포트로 지정  
+        ScreenManager.instance.skillMap.Add(0, "teleport");  //keyset의 인덱스 0번을 텔레포트로 지정  
         animator = gameObject.GetComponent<Animator>();
-        Debug.Log("sdf");
     }
 
     public void useSkill(String skillName){
@@ -41,7 +40,6 @@ public class warriorSkill : MonoBehaviour, playerMove
     private IEnumerator player_tele()  
     {   
         float delay = 1f;
-        Debug.Log("teleporting");
         
         Vector3 moveTo;
 

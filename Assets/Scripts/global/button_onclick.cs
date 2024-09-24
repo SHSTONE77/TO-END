@@ -6,7 +6,9 @@ public class button_onclick : MonoBehaviour
 {
     public player player;
     public int playerCode;
-    // Update is called once per frame
+    public GameObject stat_panel;
+    public GameObject skill_panel;
+    
     public void speed_up()
     {
         player.stat.moveSpeed += 1;
@@ -40,12 +42,14 @@ public class button_onclick : MonoBehaviour
         ScreenManager.StartGame(playerCode);
     }
 
-    public void skill_scene_move() {
-        ScreenManager.play2skill();
+    public void statTab2skillTab() {
+        stat_panel.SetActive(false);
+        skill_panel.SetActive(true);
     }
 
-    public void play_scene_move() {
-        ScreenManager.skill2play();
+    public void skillTab2statTab() {
+        skill_panel.SetActive(false);
+        stat_panel.SetActive(true);
     }
 
 }

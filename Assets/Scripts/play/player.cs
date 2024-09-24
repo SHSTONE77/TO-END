@@ -25,7 +25,6 @@ public class player : MonoBehaviour
     public RuntimeAnimatorController anim_engineer;
     int curDir;
     public GameManager game_manager;
-    public Dictionary<int, string> skillMap = new Dictionary<int, string>(); // 단축키테이블의 인덱스 - 스킬을 매핑시켜주는 관계테이블
     public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet의 value만 수정하면됌. 스킬과의 매핑은 keySet의 인덱스를 통해 매핑되므로
     playerMove playerSkill;
 
@@ -38,7 +37,6 @@ public class player : MonoBehaviour
         keySet[2] = KeyCode.E;
 
         animator = gameObject.GetComponent<Animator>();
-        Debug.Log(ScreenManager.instance.playerCode);
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
                 unitCode = unitCode.warrior;
@@ -73,10 +71,18 @@ public class player : MonoBehaviour
             isInputBlocked = !isInputBlocked;
         }
 
-        /*** 텔레포트 시작 ***/
+        /*** space ***/
         if (Input.GetKey(keySet[0])){
-            playerSkill.useSkill(skillMap[0]);
+            playerSkill.useSkill(ScreenManager.instance.skillMap[0]);
         }  
+        /*** q ***/
+        if (Input.GetKey(keySet[1])){
+            playerSkill.useSkill(ScreenManager.instance.skillMap[1]);
+        } 
+        /*** e ***/
+        if (Input.GetKey(keySet[2])){
+            playerSkill.useSkill(ScreenManager.instance.skillMap[2]);
+        } 
     }
 
     //Fixed Timestep에 따라 일정한 간격으로 호출

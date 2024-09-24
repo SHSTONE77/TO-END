@@ -10,12 +10,12 @@ using UnityEngine.UI;
 // 음식 오브젝트에 넣은 코드
 public class dragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    public String skillName;
+    public string skillName;
     public Sprite skillImage;   //slot에서 사용하기 위해 public으로 생성
     Vector3 DefaultPos;
 	
     void Start(){
-        skillImage = gameObject.GetComponent<Sprite>();
+        skillImage = gameObject.GetComponent<Image>().sprite;
     }
 
     // 드래그 시작
@@ -30,9 +30,6 @@ public class dragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     // 드래그 중
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
-        //test
-        Debug.Log("sdf");
-
     	transform.position = eventData.position;
     }
 	
