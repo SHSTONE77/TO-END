@@ -11,12 +11,10 @@ public interface playerMove{    //식별용 인터페이스
 
 public class player : MonoBehaviour
 {
-
     public bool isInputBlocked = false;
     Rigidbody2D rigid;
     unitCode unitCode;
     public Stat stat;
-
     /**** 애니메이션 컨트롤에 사용되는 변수 */
     /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
     /* isDirChg : 방향의 전환 유무, */
@@ -25,17 +23,9 @@ public class player : MonoBehaviour
     public RuntimeAnimatorController anim_warrior;
     public RuntimeAnimatorController anim_mage;
     public RuntimeAnimatorController anim_engineer;
-    
-
     int curDir;
-
     public GameManager game_manager;
-    public ScreenManager screen_manager;
-
-    public Dictionary<int, string> skillMap = new Dictionary<int, string>(); // 단축키테이블의 인덱스 - 스킬을 매핑시켜주는 관계테이블, 시작 시 keySet에 정적으로 정의된 키로 초기화 후 스킬탭에서 할당
-    
-    public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet이랑 skillMap의 key값 수정해야함
-
+    public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet의 value만 수정하면됌. 스킬과의 매핑은 keySet의 인덱스를 통해 매핑되므로
     playerMove playerSkill;
 
     //실행 시 호출
@@ -47,9 +37,7 @@ public class player : MonoBehaviour
         keySet[2] = KeyCode.E;
 
         animator = gameObject.GetComponent<Animator>();
-        Debug.Log(screen_manager.playerCode);
-        switch(screen_manager.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
-
+        switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
                 unitCode = unitCode.warrior;
                 animator.runtimeAnimatorController = anim_warrior;
@@ -76,18 +64,25 @@ public class player : MonoBehaviour
 
     //프레임 단위로 호출
     void Update()
-    {
-        
+    {     
         /*** 스탯창 전환 ***/
         if(Input.GetKeyDown(KeyCode.Tab)){
             game_manager.cnt_stat();
             isInputBlocked = !isInputBlocked;
         }
 
-        /*** 텔레포트 시작 ***/
+        /*** space ***/
         if (Input.GetKey(keySet[0])){
-            playerSkill.useSkill(skillMap[0]);
+            playerSkill.useSkill(ScreenManager.instance.skillMap[0]);
         }  
+        /*** q ***/
+        if (Input.GetKey(keySet[1])){
+            playerSkill.useSkill(ScreenManager.instance.skillMap[1]);
+        } 
+        /*** e ***/
+        if (Input.GetKey(keySet[2])){
+            playerSkill.useSkill(ScreenManager.instance.skillMap[2]);
+        } 
     }
 
     //Fixed Timestep에 따라 일정한 간격으로 호출
