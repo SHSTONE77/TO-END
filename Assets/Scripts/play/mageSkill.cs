@@ -19,8 +19,7 @@ public class mageSkill : MonoBehaviour, playerMove
     }
 
     public void useSkill(String skillName){
-        switch(skillName){
-
+        switch(skillName){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
             case "teleport" : 
                 StartCoroutine(player_tele());
                 break;
@@ -69,7 +68,7 @@ public class mageSkill : MonoBehaviour, playerMove
         yield return new WaitForSeconds(delay);
         animator.SetBool("isDelay", false);
         animator.SetBool("isTele", false);
-        transform.position += moveTo * stat.moveSpeed * Time.deltaTime * 10;
+        transform.position += moveTo * stat.moveSpeed * Time.deltaTime * 1000;
         //동작완료 0.05초 후 이동가능
         yield return new WaitForSeconds(0.2f);
         Player.isInputBlocked = false;

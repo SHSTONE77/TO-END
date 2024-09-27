@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public interface playerMove{    //식별용 인터페이스
     public void useSkill(String skillName);
@@ -25,6 +26,7 @@ public class player : MonoBehaviour
     public RuntimeAnimatorController anim_engineer;
     int curDir;
     public GameManager game_manager;
+    private int keyMax;
     public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet의 value만 수정하면됌. 스킬과의 매핑은 keySet의 인덱스를 통해 매핑되므로
     playerMove playerSkill;
 
@@ -35,6 +37,7 @@ public class player : MonoBehaviour
         keySet[0] = KeyCode.Space;
         keySet[1] = KeyCode.Q;
         keySet[2] = KeyCode.E;
+        keyMax = keySet.Length;
 
         animator = gameObject.GetComponent<Animator>();
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
@@ -71,18 +74,15 @@ public class player : MonoBehaviour
             isInputBlocked = !isInputBlocked;
         }
 
-        /*** space ***/
-        if (Input.GetKey(keySet[0])){
-            playerSkill.useSkill(ScreenManager.instance.skillMap[0]);
-        }  
-        /*** q ***/
-        if (Input.GetKey(keySet[1])){
-            playerSkill.useSkill(ScreenManager.instance.skillMap[1]);
-        } 
-        /*** e ***/
-        if (Input.GetKey(keySet[2])){
-            playerSkill.useSkill(ScreenManager.instance.skillMap[2]);
-        } 
+        if(isInputBlocked)  
+            return;
+        
+        for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
+            if (Input.GetKeyDown(keySet[i])){
+                isInputBlocked = true;
+                playerSkill.useSkill(ScreenManager.instance.skillMap[i]);
+            }  
+        }
     }
 
     //Fixed Timestep에 따라 일정한 간격으로 호출

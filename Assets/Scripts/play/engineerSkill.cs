@@ -16,13 +16,11 @@ public class engineerSkill : MonoBehaviour, playerMove
     private void Start() {
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
-        ScreenManager.instance.skillMap.Add(0, "teleport");  //keyset의 인덱스 0번을 텔레포트로 지정  
         animator = gameObject.GetComponent<Animator>();
     }
 
     public void useSkill(String skillName){
-        switch(skillName){
-
+        switch(skillName){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
             case "teleport" : 
                 StartCoroutine(player_tele());
                 break;
