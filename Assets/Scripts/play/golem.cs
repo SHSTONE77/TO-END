@@ -8,13 +8,13 @@ public class Enemy : MonoBehaviour, IEnemy
 {
     public Rigidbody2D target;
     
+
     bool isLive = true;
 
     Rigidbody2D rigid;
     public unitCode unitCode;
     public Stat stat;
     Animator animator;  
-
     Boolean isAttack;
     
     public player player;

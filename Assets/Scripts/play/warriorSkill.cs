@@ -80,7 +80,6 @@ public class warriorSkill : MonoBehaviour, IplayerMove
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         float x = Camera.main.ScreenToWorldPoint(Input.mousePosition).x - Player.transform.position.x;
         Vector3 moveTo = x > 0 ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
-
         isDamaging = true;
         damagePercent = 2f;
 

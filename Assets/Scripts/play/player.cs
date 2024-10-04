@@ -35,7 +35,10 @@ public class player : MonoBehaviour
     void Start()
     {
         keyMax = keySet.Length;
-
+        //debug
+        for(int i = 1; i < keyMax; i++){
+            ScreenManager.instance.skillMap.Add(i, null);
+        }
         animator = gameObject.GetComponent<Animator>();
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
@@ -75,6 +78,8 @@ public class player : MonoBehaviour
 
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
+                if(ScreenManager.instance.skillMap[i] == null)
+                    break;
                 curDir = 0;
                 animator.SetBool("isDirChg", false);
                 animator.SetBool("isMoving", false);
