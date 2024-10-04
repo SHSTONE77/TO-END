@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public interface playerMove{    //식별용 인터페이스
+public interface IplayerMove{    //식별용 인터페이스
     public void useSkill(String skillName);
 }
 
@@ -28,15 +28,12 @@ public class player : MonoBehaviour
     public GameManager game_manager;
     private int keyMax;
     public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet의 value만 수정하면됌. 스킬과의 매핑은 keySet의 인덱스를 통해 매핑되므로
-    playerMove playerSkill;
+    IplayerMove playerSkill;
+    public int stat_point;
 
     //실행 시 호출
     void Start()
     {
-        //테스트용으로 스페이스, q, e로 설정
-        keySet[0] = KeyCode.Space;
-        keySet[1] = KeyCode.Q;
-        keySet[2] = KeyCode.E;
         keyMax = keySet.Length;
 
         animator = gameObject.GetComponent<Animator>();
@@ -62,7 +59,6 @@ public class player : MonoBehaviour
         curDir = 3;
         stat = new Stat();
         stat = stat.uni2Stat(unitCode);
-        animator.SetBool("isDelay", false);
     }
 
     //프레임 단위로 호출
@@ -76,11 +72,15 @@ public class player : MonoBehaviour
 
         if(isInputBlocked)  
             return;
-        
+
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
+                curDir = 0;
+                animator.SetBool("isDirChg", false);
+                animator.SetBool("isMoving", false);
                 isInputBlocked = true;
                 playerSkill.useSkill(ScreenManager.instance.skillMap[i]);
+                break;
             }  
         }
     }
@@ -131,7 +131,6 @@ public class player : MonoBehaviour
             //위치변경(변경 위치 = 기존 위치 + 입력 값 * 상수)
             transform.position += new Vector3(moveTo.x, moveTo.y, 0f) * stat.moveSpeed * Time.deltaTime;
         }
-
     }
 
     //모든 update가 호출된 후, 마지막으로 호출

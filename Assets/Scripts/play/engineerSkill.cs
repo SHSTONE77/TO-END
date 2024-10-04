@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 
-public class engineerSkill : MonoBehaviour, playerMove
+public class engineerSkill : MonoBehaviour, IplayerMove
 {
     Rigidbody2D rigid;
     Animator animator;  
@@ -20,6 +20,8 @@ public class engineerSkill : MonoBehaviour, playerMove
     }
 
     public void useSkill(String skillName){
+        animator.SetBool("isDirChg", false);
+        animator.SetBool("isMoving", false);
         switch(skillName){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
             case "teleport" : 
                 StartCoroutine(player_tele());
@@ -32,9 +34,6 @@ public class engineerSkill : MonoBehaviour, playerMove
     }
 
     /**** 텔레포트 ****/
-    /* 시전 중 isInputBlocked를 true로 만들어 키 입력을 막음 */
-    /* layer를 변경시켜 충돌처리를 적용치않음 */
-    /* isMoving : 키 입력 여부(키를 누르고 있으면 True, 키를 뗀다면 False로 변경) */
     private IEnumerator player_tele()  
     {   
         float delay = 1f;
@@ -59,17 +58,7 @@ public class engineerSkill : MonoBehaviour, playerMove
                 break;
         }
         Player.isInputBlocked = true;
-        animator.SetBool("isTele", true);
-        animator.SetBool("isDirChg", false);
-
-        // //delay동안  키입력을 막고 무적상태, 나중에 애니메이션 이벤트에서 isTele를 false로 변경하는 기능 적용 후에 적용
-        // while(animator.GetBool("isTele")==true){
-        //     yield return new WaitForSeconds(delay);
-        // }
-
         yield return new WaitForSeconds(delay);
-        animator.SetBool("isDelay", false);
-        animator.SetBool("isTele", false);
         transform.position += moveTo * stat.moveSpeed * Time.deltaTime * 10;
         //동작완료 0.05초 후 이동가능
         yield return new WaitForSeconds(0.2f);
