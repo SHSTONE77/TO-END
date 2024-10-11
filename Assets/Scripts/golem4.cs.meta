@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/play/Enemy.cs.meta
-guid: 1adf9d94b0f8cd146b7a7a69a951eadf
-========
-guid: d6d8e46eba706bb45809a9bd74636127
->>>>>>>> Min:Assets/Scripts/BlackOutAnimation.cs.meta
+guid: 9b55893d1a0d84a42b59a45c9d5da8f8
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
