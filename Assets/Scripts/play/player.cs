@@ -27,7 +27,7 @@ public class player : MonoBehaviour
     int curDir;
     public GameManager game_manager;
     private int keyMax;
-    public KeyCode[] keySet = new KeyCode[3];   //키설정 기능만들때 keySet의 value만 수정하면됌. 스킬과의 매핑은 keySet의 인덱스를 통해 매핑되므로
+    public KeyCode[] keySet = new KeyCode[4];   //초기값은 object에서 설정
     IplayerMove playerSkill;
     public int stat_point;
 
@@ -78,8 +78,10 @@ public class player : MonoBehaviour
 
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
-                if(ScreenManager.instance.skillMap[i] == null)
+                if(ScreenManager.instance.skillMap[i] == null){
+                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다."); 
                     break;
+                }
                 curDir = 0;
                 animator.SetBool("isDirChg", false);
                 animator.SetBool("isMoving", false);
