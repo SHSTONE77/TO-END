@@ -8,7 +8,6 @@ using UnityEngine;
 public class button_onclick : MonoBehaviour
 {
     public player player;
-    public int playerCode;
     public GameObject stat_panel;
     public GameObject skill_panel;
     
@@ -53,7 +52,7 @@ public class button_onclick : MonoBehaviour
         player.stat.maxHp -= 10;
     }
     public void StartGame() {
-        ScreenManager.StartGame(playerCode);
+        ScreenManager.StartGame();
     }
 
     public void statTab2skillTab() {
