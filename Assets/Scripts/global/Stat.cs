@@ -17,7 +17,7 @@ public class Stat
     public unitCode unitCode {get;} //get은 생성자에서만 변경 가능, set은 지정해서 변경가능
     public string name {get;set;}
     public int maxHp{get;set;}
-    public int curHp{get;set;}
+    public float curHp{get;set;}
     public int damage{get;set;}
     public float moveSpeed{get;set;}
     public float identity{get;set;}

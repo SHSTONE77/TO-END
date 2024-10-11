@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IEnemy
 {
     public Rigidbody2D target;
     
+
     bool isLive = true;
 
     Rigidbody2D rigid;
     public unitCode unitCode;
     public Stat stat;
     Animator animator;  
-
     Boolean isAttack;
     
     public player player;
@@ -120,6 +120,11 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         isAttack = false;
         animator.SetBool("isAttack", false);
+    }
+
+    public void takeDamage(float damage){
+        stat.curHp -= damage;
+        //추후에 피격처리 추가
     }
 
 }
