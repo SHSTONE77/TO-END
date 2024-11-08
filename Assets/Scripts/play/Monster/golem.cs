@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour, IEnemy
     Boolean isAttack;
     
     public player player;
+    
 
     //생성자
     void Start()

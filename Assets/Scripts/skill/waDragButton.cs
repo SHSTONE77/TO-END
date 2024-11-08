@@ -8,9 +8,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 //활성화 된 스킬버튼
-public class dragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class waDragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    public string skillName;
+    public wa_skill skillName;
     public Sprite skillImage;   //slot에서 사용하기 위해 public으로 생성
     Vector3 DefaultPos;
 	

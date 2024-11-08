@@ -5,8 +5,15 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum wa_skill
+{
+    teleport,
+    fireball,
+    heal,
+    baldo
+}
 
-public class warriorSkill : MonoBehaviour, IplayerMove
+public class wa_skillcon : MonoBehaviour, Iskillcon
 {
     Rigidbody2D rigid;
     Animator animator;  
@@ -15,27 +22,30 @@ public class warriorSkill : MonoBehaviour, IplayerMove
     SpriteRenderer rend;    //flip을 위해 사용
     private bool isDamaging;    //damage를 줄 때 사용
     private float damagePercent;    //스킬의 배율을 설정
-    
+    public static Dictionary<int, wa_skill> skillMap = new Dictionary<int, wa_skill>();   //hashmap이 조회가 더 빠른데 c#에 없음
 
     private void Start() {
         rend = GetComponent<SpriteRenderer>();
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
         animator = gameObject.GetComponent<Animator>();
+        skillMap.Add(0, wa_skill.teleport);
     }
 
-    public void useSkill(String skillName){
-        switch(skillName){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
-            case "teleport" : 
+    public void useSkill(int skillIndex){
+        animator.SetBool("isDirChg", false);
+        animator.SetBool("isMoving", false);
+
+        switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
+            case wa_skill.teleport : 
                 StartCoroutine(player_tele());
                 break;
-            case "baldo" : 
+            case wa_skill.baldo : 
                 StartCoroutine(baldo());
                 break;
             default :
                 Debug.Log("존재하지 않는 스킬입니다.");
                 break;
-
         }
     }
 

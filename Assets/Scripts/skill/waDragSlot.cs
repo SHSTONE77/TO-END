@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image; //이미지 관련 오류 땜빵용
 
-public class dragSlot : MonoBehaviour, IDropHandler
+public class waDragSlot : MonoBehaviour, IDropHandler
 {   
     Image slotImage;    //슬롯의 주소를 저장하는 역참조역할
     Image playSlotImage;
@@ -29,15 +29,15 @@ public class dragSlot : MonoBehaviour, IDropHandler
         if (draggedObject != null)
         {
             waDragButton dragData = draggedObject.GetComponent<waDragButton>();
-            slotImage.sprite = dragData.skillImage; //슬롯의 이미지를 드래그한 이미지로 변경
-            playSlotImage.sprite = dragData.skillImage;
-            if(wa_skillcon.skillMap.ContainsKey(slotSeq))
+            if(wa_skillcon.skillMap.ContainsKey(slotSeq))  //skillmap의 slotSeq번째 자리에 이미 등록된 스킬이 존재하는 경우
             {
                 wa_skillcon.skillMap[slotSeq] = dragData.skillName;
             }
-            else{
+            else{   //등록된 스킬이 없는 경우
                 wa_skillcon.skillMap.Add(slotSeq, dragData.skillName);
             }
+            slotImage.sprite = dragData.skillImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
+            playSlotImage.sprite = dragData.skillImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경
         }
     }
 }

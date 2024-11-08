@@ -4,26 +4,35 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum en_skill
+{
+    teleport,
+    fireball,
+    heal,
+    thunder
+}
 
-public class engineerSkill : MonoBehaviour, IplayerMove
+public class en_skillcon : MonoBehaviour, Iskillcon
 {
     Rigidbody2D rigid;
     Animator animator;  
     Stat stat;
-
     player Player;
+    public static Dictionary<int, en_skill> skillMap = new Dictionary<int, en_skill>();
 
     private void Start() {
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
         animator = gameObject.GetComponent<Animator>();
+        skillMap.Add(0, en_skill.teleport);
     }
 
-    public void useSkill(String skillName){
+    public void useSkill(int skillIndex){
         animator.SetBool("isDirChg", false);
         animator.SetBool("isMoving", false);
-        switch(skillName){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
-            case "teleport" : 
+
+        switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
+            case en_skill.teleport : 
                 StartCoroutine(player_tele());
                 break;
             default :

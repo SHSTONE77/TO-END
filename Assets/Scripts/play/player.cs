@@ -6,8 +6,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public interface IplayerMove{    //식별용 인터페이스
-    public void useSkill(String skillName);
+public interface Iskillcon{    //식별용 인터페이스
+    public virtual void useSkill(int skillIndex){}   // virtual : 자식 클래스에서의 재정의(override)를 허용하는 옵션, 이유가 있었는데 사라짐 
 }
 
 public class player : MonoBehaviour
@@ -20,43 +20,39 @@ public class player : MonoBehaviour
     /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
     /* isDirChg : 방향의 전환 유무, */
     /* isMoving : 키 입력 여부(키를 누르고 있으면 True, 키를 뗀다면 False로 변경) */
-    Animator animator;  
+    Animator animator;
     public RuntimeAnimatorController anim_warrior;
     public RuntimeAnimatorController anim_mage;
     public RuntimeAnimatorController anim_engineer;
     int curDir;
-    public GameManager game_manager;
     private int keyMax;
-    public KeyCode[] keySet = new KeyCode[4];   //초기값은 object에서 설정
-    IplayerMove playerSkill;
+    public KeyCode[] keySet = new KeyCode[4];    
+    Iskillcon playerSkill;
     public int stat_point;
+    public int skill_point;
 
     //실행 시 호출
     void Start()
     {
         keyMax = keySet.Length;
-        //debug
-        for(int i = 1; i < keyMax; i++){
-            ScreenManager.instance.skillMap.Add(i, null);
-        }
         animator = gameObject.GetComponent<Animator>();
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
                 unitCode = unitCode.warrior;
                 animator.runtimeAnimatorController = anim_warrior;
-                playerSkill = gameObject.AddComponent<warriorSkill>();
+                playerSkill = gameObject.AddComponent<wa_skillcon>();
                 break;
 
             case 2 :    //이청림
                 unitCode = unitCode.mage;
                 animator.runtimeAnimatorController = anim_mage;
-                playerSkill = gameObject.AddComponent<mageSkill>();
+                playerSkill = gameObject.AddComponent<ma_skillcon>();
                 break;
 
             case 3 :    //설제관
                 unitCode = unitCode.engineer;
                 animator.runtimeAnimatorController = anim_engineer;
-                playerSkill = gameObject.AddComponent<engineerSkill>();
+                playerSkill = gameObject.AddComponent<en_skillcon>();
                 break;
         }
         curDir = 3;
@@ -69,8 +65,7 @@ public class player : MonoBehaviour
     {     
         /*** 스탯창 전환 ***/
         if(Input.GetKeyDown(KeyCode.Tab)){
-            game_manager.cnt_stat();
-            isInputBlocked = !isInputBlocked;
+            GameManager.instance.cnt_stat();
         }
 
         if(isInputBlocked)  
@@ -78,15 +73,11 @@ public class player : MonoBehaviour
 
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
-                if(ScreenManager.instance.skillMap[i] == null){
-                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다."); 
-                    break;
-                }
                 curDir = 0;
                 animator.SetBool("isDirChg", false);
                 animator.SetBool("isMoving", false);
                 isInputBlocked = true;
-                playerSkill.useSkill(ScreenManager.instance.skillMap[i]);
+                playerSkill.useSkill(i);
                 break;
             }  
         }
@@ -94,7 +85,7 @@ public class player : MonoBehaviour
 
     //Fixed Timestep에 따라 일정한 간격으로 호출
     void FixedUpdate(){
-        game_manager.handleHpBar();
+        GameManager.instance.handleHpBar();
         /* 구르기, 공격, 스킬 시전 등 모션 중 입력을 받지 않는 행동 실행 시 True로 변환해 입력받지 않도록 처리 */
         if(isInputBlocked)  
             return;
