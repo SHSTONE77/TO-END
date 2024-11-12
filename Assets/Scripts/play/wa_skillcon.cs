@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using Image = UnityEngine.UI.Image; //이미지 관련 오류 땜빵용
 
 public enum wa_skill
 {
@@ -22,7 +23,8 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
     SpriteRenderer rend;    //flip을 위해 사용
     private bool isDamaging;    //damage를 줄 때 사용
     private float damagePercent;    //스킬의 배율을 설정
-    public static Dictionary<int, wa_skill> skillMap = new Dictionary<int, wa_skill>();   //hashmap이 조회가 더 빠른데 c#에 없음
+    public static Dictionary<int, wa_skill> skillMap = new Dictionary<int, wa_skill>();   //hashmap이 조회가 더 빠른데 c#에 없음 
+    public Image[] coolTimeBox  = new Image[3];
 
     private void Start() {
         rend = GetComponent<SpriteRenderer>();
@@ -32,11 +34,15 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
         skillMap.Add(0, wa_skill.teleport);
     }
 
+    public Boolean HasSkill(int skillIndex){
+        return skillMap.ContainsKey(skillIndex);
+    }
+
     public void useSkill(int skillIndex){
         animator.SetBool("isDirChg", false);
         animator.SetBool("isMoving", false);
 
-        switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
+        switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성, 스킬 애니메이션이 종료된 후 isInputBlocked는 true로 변경시켜야함
             case wa_skill.teleport : 
                 StartCoroutine(player_tele());
                 break;
@@ -44,7 +50,8 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
                 StartCoroutine(baldo());
                 break;
             default :
-                Debug.Log("존재하지 않는 스킬입니다.");
+                ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
+                Player.isInputBlocked = false;
                 break;
         }
     }
@@ -52,8 +59,7 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
     /**** 텔레포트 ****/
     private IEnumerator player_tele()  
     {   
-        float delay = 1f;
-        
+        float delay = 1f;        
         Vector3 moveTo;
 
         switch(animator.GetInteger("direction")){
@@ -91,8 +97,7 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
         float x = Camera.main.ScreenToWorldPoint(Input.mousePosition).x - Player.transform.position.x;
         Vector3 moveTo = x > 0 ? new Vector3(1, 0, 0) : new Vector3(-1, 0, 0);
         isDamaging = true;
-        damagePercent = 2f;
-
+        damagePercent = 2f; 
         rend.flipX = x > 0 ? false : true;
         transform.position += moveTo * 4;
         animator.Play("wa_baldo");
@@ -105,7 +110,8 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
         rend.flipX = false;
         Player.isInputBlocked = false;
     }
-
+  
+      //데미지 처리
     void OnTriggerEnter2D(Collider2D collision)
     {
        if(isDamaging){

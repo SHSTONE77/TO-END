@@ -32,9 +32,11 @@ public class enDragSlot : MonoBehaviour, IDropHandler
             if(en_skillcon.skillMap.ContainsKey(slotSeq))  //skillmap의 slotSeq번째 자리에 이미 등록된 스킬이 존재하는 경우
             {
                 en_skillcon.skillMap[slotSeq] = dragData.skillName;
+                player.cooltimeManager[slotSeq] = dragData.cooltime;
             }
             else{   //등록된 스킬이 없는 경우
                 en_skillcon.skillMap.Add(slotSeq, dragData.skillName);
+                player.cooltimeManager.Add(slotSeq, dragData.cooltime);
             }
             slotImage.sprite = dragData.skillImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
             playSlotImage.sprite = dragData.skillImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경

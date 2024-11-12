@@ -12,6 +12,7 @@ public class waDragButton : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
 {
     public wa_skill skillName;
     public Sprite skillImage;   //slot에서 사용하기 위해 public으로 생성
+    public int cooltime;
     Vector3 DefaultPos;
 	
     void Start(){

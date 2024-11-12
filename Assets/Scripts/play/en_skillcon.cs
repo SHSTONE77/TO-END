@@ -19,12 +19,17 @@ public class en_skillcon : MonoBehaviour, Iskillcon
     Stat stat;
     player Player;
     public static Dictionary<int, en_skill> skillMap = new Dictionary<int, en_skill>();
+    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
 
     private void Start() {
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
         animator = gameObject.GetComponent<Animator>();
         skillMap.Add(0, en_skill.teleport);
+    }
+
+    public Boolean HasSkill(int skillIndex){
+        return skillMap.ContainsKey(skillIndex);
     }
 
     public void useSkill(int skillIndex){

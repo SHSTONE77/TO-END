@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum ma_skill
@@ -20,12 +21,17 @@ public class ma_skillcon : MonoBehaviour, Iskillcon
 
     player Player;
     public static Dictionary<int, ma_skill> skillMap = new Dictionary<int, ma_skill>();
+    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
 
     private void Start() {
         Player = gameObject.GetComponent<player>();
         stat = Player.stat;
         animator = gameObject.GetComponent<Animator>();
         skillMap.Add(0, ma_skill.teleport);
+    }
+
+    public Boolean HasSkill(int skillIndex){
+        return skillMap.ContainsKey(skillIndex);
     }
         
     public void useSkill(int skillIndex){

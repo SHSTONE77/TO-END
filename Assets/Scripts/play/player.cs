@@ -4,37 +4,54 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 public interface Iskillcon{    //식별용 인터페이스
+    public virtual Boolean HasSkill(int skillIndex){
+        return true;
+    }
     public virtual void useSkill(int skillIndex){}   // virtual : 자식 클래스에서의 재정의(override)를 허용하는 옵션, 이유가 있었는데 사라짐 
 }
 
 public class player : MonoBehaviour
 {
+    [SerializeField]
+    private unitCode unitCode;
+    [SerializeField]
+    private RuntimeAnimatorController anim_warrior;
+    [SerializeField]
+    private RuntimeAnimatorController anim_mage;
+    [SerializeField]
+    private RuntimeAnimatorController anim_engineer;
+    [SerializeField]
+    private Image[] coolTimeBox;
     public bool isInputBlocked = false;
-    Rigidbody2D rigid;
-    unitCode unitCode;
+    [SerializeField]
+    private KeyCode[] keySet;   //인스펙터창에서 keyccode 지정이 필요
     public Stat stat;
     /**** 애니메이션 컨트롤에 사용되는 변수 */
     /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
     /* isDirChg : 방향의 전환 유무, */
     /* isMoving : 키 입력 여부(키를 누르고 있으면 True, 키를 뗀다면 False로 변경) */
-    Animator animator;
-    public RuntimeAnimatorController anim_warrior;
-    public RuntimeAnimatorController anim_mage;
-    public RuntimeAnimatorController anim_engineer;
+    private Animator animator;
     int curDir;
     private int keyMax;
-    public KeyCode[] keySet = new KeyCode[4];    
+    public List<float> skillCooldown = new List<float>();
     Iskillcon playerSkill;
     public int stat_point;
     public int skill_point;
+    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
 
     //실행 시 호출
     void Start()
     {
         keyMax = keySet.Length;
+        cooltimeManager.Add(0, 5);  //index 0번에 들어가는 대쉬의 쿨타임 설정
+        for(int i = 0; i < keyMax; i++){
+            skillCooldown.Add(0f);
+        }
         animator = gameObject.GetComponent<Animator>();
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
@@ -73,12 +90,22 @@ public class player : MonoBehaviour
 
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
-                curDir = 0;
-                animator.SetBool("isDirChg", false);
-                animator.SetBool("isMoving", false);
-                isInputBlocked = true;
-                playerSkill.useSkill(i);
-                break;
+                if(playerSkill.HasSkill(i)){    //미등록 상황 예외처리
+                    if(coolTimeBox[i].fillAmount < 0.97f){  //쿨타임 중인 경우
+                        ScreenManager.instance.setTextBox("스킬이 아직 준비되지 않았습니다");
+                    }
+                    else{
+                        StartCoroutine(coolTime(i));
+                        animator.SetBool("isDirChg", false);
+                        animator.SetBool("isMoving", false);
+                        isInputBlocked = true;
+                        playerSkill.useSkill(i);
+                        break;
+                    }
+                }
+                else{
+                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
+                }
             }  
         }
     }
@@ -134,7 +161,17 @@ public class player : MonoBehaviour
     //모든 update가 호출된 후, 마지막으로 호출
     void LateUpdate()
     {
-        
+
     }
 
+    //쿨타임 적용
+    private IEnumerator coolTime(int slotSeq){
+        skillCooldown[slotSeq] =  0;
+        while(skillCooldown[slotSeq] < cooltimeManager[slotSeq]-0.01f){   
+            skillCooldown[slotSeq] += Time.deltaTime;
+            coolTimeBox[slotSeq].fillAmount = skillCooldown[slotSeq]/cooltimeManager[slotSeq];
+            yield return new WaitForFixedUpdate();
+        }
+        coolTimeBox[slotSeq].fillAmount = 1f;
+    }
 }
