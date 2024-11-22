@@ -15,6 +15,12 @@ public class GameManager : MonoBehaviour
     bool isOpen;
     public Slider hpbar;
     [SerializeField]
+    private TextMeshProUGUI maLastSkillPoints;
+    [SerializeField]
+    private TextMeshProUGUI waLastSkillPoints;
+    [SerializeField]
+    private TextMeshProUGUI enLastSkillPoints;
+    [SerializeField]
     private GameObject wa_panel;
     [SerializeField]
     private GameObject ma_panel;
@@ -35,6 +41,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        handleSKillPoints();
     }
 
     public void cnt_stat(){
@@ -59,6 +66,20 @@ public class GameManager : MonoBehaviour
     
     public void handleHpBar(){
         hpbar.value = (float)player.stat.curHp / (float)player.stat.maxHp;
+    }
+
+    public void handleSKillPoints(){
+        switch(ScreenManager.instance.playerCode){
+            case 1 : 
+                waLastSkillPoints.SetText(Convert.ToString(player.skill_point));
+                break;
+            case 2 : 
+                maLastSkillPoints.SetText(Convert.ToString(player.skill_point));
+                break;
+            case 3 : 
+                enLastSkillPoints.SetText(Convert.ToString(player.skill_point));
+                break;
+        }
     }
 
 }

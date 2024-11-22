@@ -1,42 +1,35 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
+using Image = UnityEngine.UI.Image;
 
-public enum button_code
+[CreateAssetMenu(fileName = "newNode", menuName = "Skill Tree/MageSkillNode")]
+public class maSkillNode : ScriptableObject
 {
-    passive,
-    active
+    public Sprite playSlotImage;
+    public int cooltime;
+    public ma_skill skillName; // 스킬 이름
+    public bool isUnlocked = true; // 스킬 습득 여부
+    public List<maSkillNode> preSkill;// 이전 스킬의 포인터
 }
 
-public class skillNode : MonoBehaviour
+[CreateAssetMenu(fileName = "newNode", menuName = "Skill Tree/EngineerSkillNode")]
+public class enSkillNode : ScriptableObject
 {
-    [SerializeField]
-    private button_code button_type;
-    private Image outer_box;
+    public Sprite playSlotImage;
+    public int cooltime;
+    public en_skill skillName; // 스킬 이름
+    public bool isUnlocked = true; // 스킬 습득 여부
+    public List<enSkillNode> preSkill; // 이전 스킬의 포인터
+}
 
-    private Button button;
-    
-    void Start()
-    {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(OnButtonClick);
-    }
-
-    void OnButtonClick()
-    {
-        if(GameManager.instance.player.skill_point > 1){
-            outer_box.color = new Color(0, 0, 0);
-            switch(button_type) {
-                case button_code.passive :
-                    gameObject.AddComponent<dragButton>();
-                    break;
-                case button_code.active :
-                    break;
-            }
-        }
-        else{
-            ScreenManager.instance.setTextBox("스킬 포인트가 모자랍니다.");
-        }
-    }
+[CreateAssetMenu(fileName = "newNode", menuName = "Skill Tree/WarriorSkillNode")]
+public class waSkillNode : ScriptableObject
+{
+    public Sprite playSlotImage;
+    public int cooltime;
+    public wa_skill skillName; // 스킬 이름
+    public bool isUnlocked = true; // 스킬 습득 여부
+    public List<waSkillNode> preSkill; // 이전 스킬의 포인터
 }

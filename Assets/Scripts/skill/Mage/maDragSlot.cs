@@ -31,15 +31,15 @@ public class maDragSlot : MonoBehaviour, IDropHandler
             maDragButton dragData = draggedObject.GetComponent<maDragButton>();
             if(ma_skillcon.skillMap.ContainsKey(slotSeq))  //skillmap의 slotSeq번째 자리에 이미 등록된 스킬이 존재하는 경우
             {
-                ma_skillcon.skillMap[slotSeq] = dragData.skillName;
-                player.cooltimeManager[slotSeq] = dragData.cooltime;
+                ma_skillcon.skillMap[slotSeq] = dragData.skillNode.skillName;
+                player.cooltimeManager[slotSeq] = dragData.skillNode.cooltime;
             }
             else{   //등록된 스킬이 없는 경우
-                ma_skillcon.skillMap.Add(slotSeq, dragData.skillName);
-                player.cooltimeManager.Add(slotSeq, dragData.cooltime);
+                ma_skillcon.skillMap.Add(slotSeq, dragData.skillNode.skillName);
+                player.cooltimeManager.Add(slotSeq, dragData.skillNode.cooltime);
             }
-            slotImage.sprite = dragData.skillImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
-            playSlotImage.sprite = dragData.skillImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경
+            slotImage.sprite = dragData.skillNode.playSlotImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
+            playSlotImage.sprite = dragData.skillNode.playSlotImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경
         }
     }
 }

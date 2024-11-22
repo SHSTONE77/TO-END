@@ -14,6 +14,7 @@ public enum wa_skill
     baldo
 }
 
+//플레이어의 키와 그 키에 등록한 스킬을 저장하는 skillMap 테이블을 통해 입력한 키에 따른 스킬을 발동시키는 역할
 public class wa_skillcon : MonoBehaviour, Iskillcon
 {
     Rigidbody2D rigid;
