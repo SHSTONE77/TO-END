@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image; //이미지 관련 오류 땜빵용
 
 public class waDragSlot : MonoBehaviour, IDropHandler
@@ -29,17 +23,28 @@ public class waDragSlot : MonoBehaviour, IDropHandler
         if (draggedObject != null)
         {
             waDragButton dragData = draggedObject.GetComponent<waDragButton>();
-            if(wa_skillcon.skillMap.ContainsKey(slotSeq))  //skillmap의 slotSeq번째 자리에 이미 등록된 스킬이 존재하는 경우
-            {
-                wa_skillcon.skillMap[slotSeq] = dragData.skillNode.skillName;
-                player.cooltimeManager[slotSeq] = dragData.skillNode.cooltime;
+            if(!dragData.skillNode.isUnlocked){
+                Boolean isSameSkill = false;
+                foreach (int key in wa_skillcon.skillMap.Keys) {
+                    if(dragData.skillNode.skillName == wa_skillcon.skillMap[key]){
+                            isSameSkill = true;
+                            break;
+                        }
+                }
+                if(!isSameSkill){
+                    if(wa_skillcon.skillMap.ContainsKey(slotSeq))  //skillmap의 slotSeq번째 자리에 이미 등록된 스킬이 존재하는 경우
+                    {
+                        wa_skillcon.skillMap[slotSeq] = dragData.skillNode.skillName;
+                        player.cooltimeManager[slotSeq] = dragData.skillNode.cooltime;
+                    }
+                    else{   //등록된 스킬이 없는 경우
+                        wa_skillcon.skillMap.Add(slotSeq, dragData.skillNode.skillName);
+                        player.cooltimeManager.Add(slotSeq, dragData.skillNode.cooltime);
+                    }
+                    slotImage.sprite = dragData.skillNode.playSlotImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
+                    playSlotImage.sprite = dragData.skillNode.playSlotImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경
+                }
             }
-            else{   //등록된 스킬이 없는 경우
-                wa_skillcon.skillMap.Add(slotSeq, dragData.skillNode.skillName);
-                player.cooltimeManager.Add(slotSeq, dragData.skillNode.cooltime);
-            }
-            slotImage.sprite = dragData.skillNode.playSlotImage; //스킬트리 스킬 슬롯의 이미지를 드래그한 이미지로 변경
-            playSlotImage.sprite = dragData.skillNode.playSlotImage; //인게임 스킬 슬롯의 이미지를 드래그한 이미지로 변경
         }
     }
 }

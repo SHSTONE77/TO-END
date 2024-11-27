@@ -11,7 +11,8 @@ public enum wa_skill
     teleport,
     fireball,
     heal,
-    baldo
+    baldo,
+    slash
 }
 
 //플레이어의 키와 그 키에 등록한 스킬을 저장하는 skillMap 테이블을 통해 입력한 키에 따른 스킬을 발동시키는 역할
@@ -40,9 +41,6 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
     }
 
     public void useSkill(int skillIndex){
-        animator.SetBool("isDirChg", false);
-        animator.SetBool("isMoving", false);
-
         switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성, 스킬 애니메이션이 종료된 후 isInputBlocked는 true로 변경시켜야함
             case wa_skill.teleport : 
                 StartCoroutine(player_tele());
@@ -51,10 +49,11 @@ public class wa_skillcon : MonoBehaviour, Iskillcon
                 StartCoroutine(baldo());
                 break;
             default :
-                ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
-                Player.isInputBlocked = false;
+                ScreenManager.instance.setTextBox("구현되지 않은 스킬입니다");
+                Debug.Log("존재하지 않는 스킬입니다.");
                 break;
         }
+        Player.isInputBlocked = false;
     }
 
     /**** 텔레포트 ****/

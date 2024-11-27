@@ -9,7 +9,8 @@ public enum en_skill
     teleport,
     fireball,
     heal,
-    thunder
+    thunder,
+    hwal
 }
 
 public class en_skillcon : MonoBehaviour, Iskillcon
@@ -33,18 +34,17 @@ public class en_skillcon : MonoBehaviour, Iskillcon
     }
 
     public void useSkill(int skillIndex){
-        animator.SetBool("isDirChg", false);
-        animator.SetBool("isMoving", false);
-
         switch(skillMap[skillIndex]){  //스킬 추가 시 분기(case) 추가하고 아래에 메소드 작성
             case en_skill.teleport : 
                 StartCoroutine(player_tele());
                 break;
             default :
+                ScreenManager.instance.setTextBox("구현되지 않은 스킬입니다");
                 Debug.Log("존재하지 않는 스킬입니다.");
                 break;
 
         }
+        Player.isInputBlocked = false;
     }
 
     /**** 텔레포트 ****/
@@ -71,7 +71,6 @@ public class en_skillcon : MonoBehaviour, Iskillcon
                 moveTo = new Vector3(0, 0, 0);
                 break;
         }
-        Player.isInputBlocked = true;
         yield return new WaitForSeconds(delay);
         transform.position += moveTo * stat.moveSpeed * Time.deltaTime * 10;
         //동작완료 0.05초 후 이동가능
