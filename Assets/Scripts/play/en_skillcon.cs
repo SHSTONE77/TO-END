@@ -15,6 +15,14 @@ public enum en_skill
 
 public class en_skillcon : MonoBehaviour, Iskillcon
 {
+    //오디오=================================================
+    [SerializeField] private SoundObj dashSound;
+    [SerializeField] private new AudioSource audio; //스킬소리 제어용
+    [SerializeField] private AudioClip footstep;
+    // [SerializeField] private AudioClip footstep;
+    // [SerializeField] private AudioClip footstep;
+
+    //애니메이션===============================================
     Rigidbody2D rigid;
     Animator animator;  
     Stat stat;

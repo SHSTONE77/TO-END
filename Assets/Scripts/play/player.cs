@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -17,32 +18,33 @@ public interface Iskillcon{    //식별용 인터페이스
 
 public class player : MonoBehaviour
 {
-    [SerializeField]
-    private unitCode unitCode;
-    [SerializeField]
-    private RuntimeAnimatorController anim_warrior;
-    [SerializeField]
-    private RuntimeAnimatorController anim_mage;
-    [SerializeField]
-    private RuntimeAnimatorController anim_engineer;
-    [SerializeField]
-    private Image[] coolTimeBox;
-    public bool isInputBlocked = false;
-    [SerializeField]
-    private KeyCode[] keySet;   //인스펙터창에서 keyccode 지정이 필요
-    public Stat stat;
-    /**** 애니메이션 컨트롤에 사용되는 변수 */
-    /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
-    /* isDirChg : 방향의 전환 유무, */
-    /* isMoving : 키 입력 여부(키를 누르고 있으면 True, 키를 뗀다면 False로 변경) */
+    //오디오=================================================
+    [SerializeField] private AudioClip footstep;
+    [SerializeField] private new AudioSource audio; //발소리 제어용
+    private float footTime = 0f;
+    private float soundLen = 2f;
+
+    //애니메이션==============================================
+    [SerializeField] private unitCode unitCode;
+    [SerializeField] private RuntimeAnimatorController anim_warrior;
+    [SerializeField] private RuntimeAnimatorController anim_mage;
+    [SerializeField] private RuntimeAnimatorController anim_engineer;
     private Animator animator;
-    int curDir;
-    private int keyMax;
+    
+    //스킬==================================================
+    [SerializeField] private Image[] coolTimeBox;
+    [SerializeField] private KeyCode[] keySet;   //인스펙터창에서 keycode 지정이 필요
+    public bool isInputBlocked = false;
+    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
     public List<float> skillCooldown = new List<float>();
     Iskillcon playerSkill;
+
+    //플레이어 정보==========================================
+    public Stat stat;
+    int curDir;
+    private int keyMax;
     public int stat_point;
     public int skill_point;
-    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
 
     //실행 시 호출
     void Start()
@@ -124,12 +126,20 @@ public class player : MonoBehaviour
 
         if (horizontalInput == 0 && verticalInput == 0){    //입력값이 없는 경우
             animator.SetBool("isMoving", false);
+            audio.Stop();
+            footTime = 0f;
         }
         else{
+            if(footTime < Time.time){
+                audio.clip = footstep;
+                audio.Play();
+                footTime = Time.time + soundLen;
+            }
             animator.SetBool("isMoving", true);
             //방향 설정
             Vector2 moveTo = new Vector2(horizontalInput, verticalInput);
-            int toDir = 0;  
+            int toDir = 0;
+            Debug.Log(horizontalInput + "-" + verticalInput);  
             if(math.abs(horizontalInput) > math.abs(verticalInput)){
                 if(horizontalInput > 0)
                     toDir = 4;
