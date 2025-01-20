@@ -9,7 +9,13 @@ public class button_onclick : MonoBehaviour
 {
     public player player;
     public GameObject stat_panel;
-    public GameObject skill_panel;
+
+    [SerializeField]
+    private GameObject wa_skill;
+    [SerializeField]
+    private GameObject ma_skill;
+    [SerializeField]
+    private GameObject en_skill;
     
     public void speed_up()
     {
@@ -57,12 +63,36 @@ public class button_onclick : MonoBehaviour
 
     public void statTab2skillTab() {
         stat_panel.SetActive(false);
-        skill_panel.SetActive(true);
+        switch(ScreenManager.instance.playerCode){
+            case 1 :
+                wa_skill.SetActive(true);
+                break;
+
+            case 2 :
+                ma_skill.SetActive(true);
+                break;
+
+            case 3 : 
+                en_skill.SetActive(true);
+                break;
+        }
     }
 
     public void skillTab2statTab() {
-        skill_panel.SetActive(false);
         stat_panel.SetActive(true);
+        switch(ScreenManager.instance.playerCode){
+            case 1 :
+                wa_skill.SetActive(false);
+                break;
+
+            case 2 :
+                ma_skill.SetActive(false);
+                break;
+
+            case 3 : 
+                en_skill.SetActive(false);
+                break;
+        }
     }
 
 }

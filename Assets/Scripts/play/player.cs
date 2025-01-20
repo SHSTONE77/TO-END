@@ -3,60 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
-public interface IplayerMove{    //식별용 인터페이스
-    public void useSkill(String skillName);
+public interface Iskillcon{    //식별용 인터페이스
+    public virtual Boolean HasSkill(int skillIndex){
+        return true;
+    }
+    public virtual void useSkill(int skillIndex){}   // virtual : 자식 클래스에서의 재정의(override)를 허용하는 옵션, 이유가 있었는데 사라짐 
 }
 
 public class player : MonoBehaviour
 {
+    //오디오=================================================
+    [SerializeField] private AudioClip footstep;
+    [SerializeField] private new AudioSource audio; //발소리 제어용
+    private float footTime = 0f;
+    private float soundLen = 2f;
+
+    //애니메이션==============================================
+    [SerializeField] private unitCode unitCode;
+    [SerializeField] private RuntimeAnimatorController anim_warrior;
+    [SerializeField] private RuntimeAnimatorController anim_mage;
+    [SerializeField] private RuntimeAnimatorController anim_engineer;
+    private Animator animator;
+    
+    //스킬==================================================
+    [SerializeField] private Image[] coolTimeBox;
+    [SerializeField] private KeyCode[] keySet;   //인스펙터창에서 keycode 지정이 필요
     public bool isInputBlocked = false;
-    Rigidbody2D rigid;
-    unitCode unitCode;
+    public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
+    public List<float> skillCooldown = new List<float>();
+    Iskillcon playerSkill;
+
+    //플레이어 정보==========================================
     public Stat stat;
-    /**** 애니메이션 컨트롤에 사용되는 변수 */
-    /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
-    /* isDirChg : 방향의 전환 유무, */
-    /* isMoving : 키 입력 여부(키를 누르고 있으면 True, 키를 뗀다면 False로 변경) */
-    Animator animator;  
-    public RuntimeAnimatorController anim_warrior;
-    public RuntimeAnimatorController anim_mage;
-    public RuntimeAnimatorController anim_engineer;
     int curDir;
-    public GameManager game_manager;
     private int keyMax;
-    public KeyCode[] keySet = new KeyCode[4];   //초기값은 object에서 설정
-    IplayerMove playerSkill;
     public int stat_point;
+    public int skill_point;
 
     //실행 시 호출
     void Start()
     {
         keyMax = keySet.Length;
-        //debug
-        for(int i = 1; i < keyMax; i++){
-            ScreenManager.instance.skillMap.Add(i, null);
+        cooltimeManager.Add(0, 5);  //index 0번에 들어가는 대쉬의 쿨타임 설정
+        for(int i = 0; i < keyMax; i++){
+            skillCooldown.Add(0f);
         }
         animator = gameObject.GetComponent<Animator>();
         switch(ScreenManager.instance.playerCode){  //screen_manager에서 받아온 플레이어 코드에 따라 애니메이터와 스킬탭을 매핑
             case 1 :    //척무진
                 unitCode = unitCode.warrior;
                 animator.runtimeAnimatorController = anim_warrior;
-                playerSkill = gameObject.AddComponent<warriorSkill>();
+                playerSkill = gameObject.AddComponent<wa_skillcon>();
                 break;
 
             case 2 :    //이청림
                 unitCode = unitCode.mage;
                 animator.runtimeAnimatorController = anim_mage;
-                playerSkill = gameObject.AddComponent<mageSkill>();
+                playerSkill = gameObject.AddComponent<ma_skillcon>();
                 break;
 
             case 3 :    //설제관
                 unitCode = unitCode.engineer;
                 animator.runtimeAnimatorController = anim_engineer;
-                playerSkill = gameObject.AddComponent<engineerSkill>();
+                playerSkill = gameObject.AddComponent<en_skillcon>();
                 break;
         }
         curDir = 3;
@@ -69,8 +84,7 @@ public class player : MonoBehaviour
     {     
         /*** 스탯창 전환 ***/
         if(Input.GetKeyDown(KeyCode.Tab)){
-            game_manager.cnt_stat();
-            isInputBlocked = !isInputBlocked;
+            GameManager.instance.cnt_stat();
         }
 
         if(isInputBlocked)  
@@ -78,23 +92,29 @@ public class player : MonoBehaviour
 
         for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
             if (Input.GetKeyDown(keySet[i])){
-                if(ScreenManager.instance.skillMap[i] == null){
-                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다."); 
-                    break;
+                if(playerSkill.HasSkill(i)){    //미등록 상황 예외처리
+                    if(coolTimeBox[i].fillAmount < 0.97f){  //쿨타임 중인 경우
+                        ScreenManager.instance.setTextBox("스킬이 아직 준비되지 않았습니다");
+                    }
+                    else{
+                        StartCoroutine(coolTime(i));
+                        animator.SetBool("isDirChg", false);
+                        animator.SetBool("isMoving", false);
+                        isInputBlocked = true;
+                        playerSkill.useSkill(i);
+                        break;
+                    }
                 }
-                curDir = 0;
-                animator.SetBool("isDirChg", false);
-                animator.SetBool("isMoving", false);
-                isInputBlocked = true;
-                playerSkill.useSkill(ScreenManager.instance.skillMap[i]);
-                break;
+                else{
+                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
+                }
             }  
         }
     }
 
     //Fixed Timestep에 따라 일정한 간격으로 호출
     void FixedUpdate(){
-        game_manager.handleHpBar();
+        GameManager.instance.handleHpBar();
         /* 구르기, 공격, 스킬 시전 등 모션 중 입력을 받지 않는 행동 실행 시 True로 변환해 입력받지 않도록 처리 */
         if(isInputBlocked)  
             return;
@@ -106,12 +126,20 @@ public class player : MonoBehaviour
 
         if (horizontalInput == 0 && verticalInput == 0){    //입력값이 없는 경우
             animator.SetBool("isMoving", false);
+            audio.Stop();
+            footTime = 0f;
         }
         else{
+            if(footTime < Time.time){
+                audio.clip = footstep;
+                audio.Play();
+                footTime = Time.time + soundLen;
+            }
             animator.SetBool("isMoving", true);
             //방향 설정
             Vector2 moveTo = new Vector2(horizontalInput, verticalInput);
-            int toDir = 0;  
+            int toDir = 0;
+            Debug.Log(horizontalInput + "-" + verticalInput);  
             if(math.abs(horizontalInput) > math.abs(verticalInput)){
                 if(horizontalInput > 0)
                     toDir = 4;
@@ -143,7 +171,17 @@ public class player : MonoBehaviour
     //모든 update가 호출된 후, 마지막으로 호출
     void LateUpdate()
     {
-        
+
     }
 
+    //쿨타임 적용
+    private IEnumerator coolTime(int slotSeq){
+        skillCooldown[slotSeq] =  0;
+        while(skillCooldown[slotSeq] < cooltimeManager[slotSeq]-0.01f){   
+            skillCooldown[slotSeq] += Time.deltaTime;
+            coolTimeBox[slotSeq].fillAmount = skillCooldown[slotSeq]/cooltimeManager[slotSeq];
+            yield return new WaitForFixedUpdate();
+        }
+        coolTimeBox[slotSeq].fillAmount = 1f;
+    }
 }
