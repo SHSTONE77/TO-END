@@ -31,7 +31,8 @@ public class ScreenManager : MonoBehaviour
         }
     }
     public static void StartGame() {
-        SceneManager.LoadScene("play_scene");
+        SceneManager.LoadScene("PlayScene");
+        BgmManager.Instance.PlayMusic("Boss");
     }
 
     public void setTextBox(String text){
