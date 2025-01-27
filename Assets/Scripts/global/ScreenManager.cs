@@ -22,7 +22,7 @@ public class ScreenManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            instance.playerCode = 3;    //1 : 척무진, 2 : 이청림, 3 : 설제관
+            instance.playerCode = 1;    //1 : 척무진, 2 : 이청림, 3 : 설제관
             DontDestroyOnLoad(gameObject);
         }
         else if (instance != this)

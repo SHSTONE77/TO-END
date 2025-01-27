@@ -17,19 +17,13 @@ public interface Iskillcon{    //식별용 인터페이스
 
 public class player : MonoBehaviour
 {
-    [SerializeField]
-    private unitCode unitCode;
-    [SerializeField]
-    private RuntimeAnimatorController anim_warrior;
-    [SerializeField]
-    private RuntimeAnimatorController anim_mage;
-    [SerializeField]
-    private RuntimeAnimatorController anim_engineer;
-    [SerializeField]
-    private Image[] coolTimeBox;
+    [SerializeField]private unitCode unitCode;
+    [SerializeField]private RuntimeAnimatorController anim_warrior;
+    [SerializeField]private RuntimeAnimatorController anim_mage;
+    [SerializeField]private RuntimeAnimatorController anim_engineer;
+    [SerializeField]private Image[] coolTimeBox;
     public bool isInputBlocked = false;
-    [SerializeField]
-    private KeyCode[] keySet;   //인스펙터창에서 keyccode 지정이 필요
+    [SerializeField]private KeyCode[] keySet;   //인스펙터창에서 keycode 지정이 필요
     public Stat stat;
     /**** 애니메이션 컨트롤에 사용되는 변수 */
     /* direction : 1부터 4까지 반시계 방향으로 나타낸 방향(1:위쪽, 2:왼쪽, 3:아랫쪽, 4:오른쪽) */
@@ -44,6 +38,13 @@ public class player : MonoBehaviour
     public int skill_point;
     public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
 
+    public GameObject warriorBaldo;
+
+    private void Awake()
+    {
+        warriorBaldo = transform.Find("warrior_baldo").gameObject;
+
+    }
     //실행 시 호출
     void Start()
     {

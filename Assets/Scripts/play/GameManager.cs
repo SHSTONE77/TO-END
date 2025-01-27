@@ -14,18 +14,12 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     bool isOpen;
     public Slider hpbar;
-    [SerializeField]
-    private TextMeshProUGUI maLastSkillPoints;
-    [SerializeField]
-    private TextMeshProUGUI waLastSkillPoints;
-    [SerializeField]
-    private TextMeshProUGUI enLastSkillPoints;
-    [SerializeField]
-    private GameObject wa_panel;
-    [SerializeField]
-    private GameObject ma_panel;
-    [SerializeField]
-    private GameObject en_panel;
+    [SerializeField]private TextMeshProUGUI maLastSkillPoints;
+    [SerializeField]private TextMeshProUGUI waLastSkillPoints;
+    [SerializeField]private TextMeshProUGUI enLastSkillPoints;
+    [SerializeField]private GameObject wa_panel;
+    [SerializeField]private GameObject ma_panel;
+    [SerializeField]private GameObject en_panel;
     
 
     void Start()

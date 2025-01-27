@@ -11,6 +11,6 @@ public class TargetCamera : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 pos = new Vector3(target.position.x, target.position.y, -10f);
-        transform.position = Vector3.Slerp(transform.position, pos, FollowSpeed*Time.deltaTime);    
+        transform.position = Vector3.Slerp(transform.position, pos, FollowSpeed*Time.deltaTime);
     }
 }
