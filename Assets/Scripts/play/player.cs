@@ -33,7 +33,7 @@ public class player : MonoBehaviour
     
     //스킬==================================================
     [SerializeField] private Image[] coolTimeBox;
-    [SerializeField] private KeyCode[] keySet;   //인스펙터창에서 keycode 지정이 필요
+    [SerializeField] private KeyCode[] keySet;   //인스펙터창에서 keycode 지정이 필요, 추후에 키세팅 개발 시 이용
     public bool isInputBlocked = false;
     public static Dictionary<int, int> cooltimeManager = new Dictionary<int, int>();
     public List<float> skillCooldown = new List<float>();
@@ -87,28 +87,26 @@ public class player : MonoBehaviour
             GameManager.instance.cnt_stat();
         }
 
-        if(isInputBlocked)  
-            return;
-
-        for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
-            if (Input.GetKeyDown(keySet[i])){
-                if(playerSkill.HasSkill(i)){    //미등록 상황 예외처리
-                    if(coolTimeBox[i].fillAmount < 0.97f){  //쿨타임 중인 경우
-                        ScreenManager.instance.setTextBox("스킬이 아직 준비되지 않았습니다");
+        if(!isInputBlocked)  {
+            for(int i = 0; i < keyMax; i++){    //keyMax말고 keySet.Length 써도 되는데 update가 매 프레임마다 호출되다보니 변수를 써서 연산을 줄임  
+                if (Input.GetKeyDown(keySet[i])){
+                    if(playerSkill.HasSkill(i)){    //미등록 상황 예외처리
+                        if(coolTimeBox[i].fillAmount < 0.97f){  //쿨타임 중인 경우
+                            ScreenManager.instance.setTextBox("스킬이 아직 준비되지 않았습니다");
+                        }
+                        else{
+                            StartCoroutine(coolTime(i));
+                            animator.SetBool("isDirChg", false);
+                            animator.SetBool("isMoving", false);
+                            playerSkill.useSkill(i);
+                            break;
+                        }
                     }
                     else{
-                        StartCoroutine(coolTime(i));
-                        animator.SetBool("isDirChg", false);
-                        animator.SetBool("isMoving", false);
-                        isInputBlocked = true;
-                        playerSkill.useSkill(i);
-                        break;
+                        ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
                     }
-                }
-                else{
-                    ScreenManager.instance.setTextBox("등록된 스킬이 없습니다");
-                }
-            }  
+                }  
+            }
         }
     }
 
@@ -116,55 +114,54 @@ public class player : MonoBehaviour
     void FixedUpdate(){
         GameManager.instance.handleHpBar();
         /* 구르기, 공격, 스킬 시전 등 모션 중 입력을 받지 않는 행동 실행 시 True로 변환해 입력받지 않도록 처리 */
-        if(isInputBlocked)  
-            return;
+        if(!isInputBlocked){  
 
-        /**** 플레이어 이동 ****/
-        //플레이어 입력 저장
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
+            /**** 플레이어 이동 ****/
+            //플레이어 입력 저장
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            float verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (horizontalInput == 0 && verticalInput == 0){    //입력값이 없는 경우
-            animator.SetBool("isMoving", false);
-            audio.Stop();
-            footTime = 0f;
-        }
-        else{
-            if(footTime < Time.time){
-                audio.clip = footstep;
-                audio.Play();
-                footTime = Time.time + soundLen;
-            }
-            animator.SetBool("isMoving", true);
-            //방향 설정
-            Vector2 moveTo = new Vector2(horizontalInput, verticalInput);
-            int toDir = 0;
-            Debug.Log(horizontalInput + "-" + verticalInput);  
-            if(math.abs(horizontalInput) > math.abs(verticalInput)){
-                if(horizontalInput > 0)
-                    toDir = 4;
-                else
-                    toDir = 2;
-            }
-            else {
-                if(verticalInput > 0)
-                    toDir = 1;
-                else
-                    toDir = 3;
-            }
-
-            //애니메이션 변경
-            if(curDir != toDir){    //방향의 변경이 이루어진 경우
-                curDir = toDir;
-                animator.SetInteger("direction", toDir);
-                animator.SetBool("isDirChg", true);
+            if (horizontalInput == 0 && verticalInput == 0){    //입력값이 없는 경우
+                animator.SetBool("isMoving", false);
+                audio.Stop();
+                footTime = 0f;
             }
             else{
-                animator.SetBool("isDirChg", false);
-            }
+                if(footTime < Time.time){
+                    audio.clip = footstep;
+                    audio.Play();
+                    footTime = Time.time + soundLen;
+                }
+                animator.SetBool("isMoving", true);
+                //방향 설정
+                Vector2 moveTo = new Vector2(horizontalInput, verticalInput);
+                int toDir = 0;
+                if(math.abs(horizontalInput) > math.abs(verticalInput)){
+                    if(horizontalInput > 0)
+                        toDir = 4;
+                    else
+                        toDir = 2;
+                }
+                else {
+                    if(verticalInput > 0)
+                        toDir = 1;
+                    else
+                        toDir = 3;
+                }
 
-            //위치변경(변경 위치 = 기존 위치 + 입력 값 * 상수)
-            transform.position += new Vector3(moveTo.x, moveTo.y, 0f) * stat.moveSpeed * Time.deltaTime;
+                //애니메이션 변경
+                if(curDir != toDir){    //방향의 변경이 이루어진 경우
+                    curDir = toDir;
+                    animator.SetInteger("direction", toDir);
+                    animator.SetBool("isDirChg", true);
+                }
+                else{
+                    animator.SetBool("isDirChg", false);
+                }
+
+                //위치변경(변경 위치 = 기존 위치 + 입력 값 * 상수)
+                transform.position += new Vector3(moveTo.x, moveTo.y, 0f) * stat.moveSpeed * Time.deltaTime;
+            }
         }
     }
 

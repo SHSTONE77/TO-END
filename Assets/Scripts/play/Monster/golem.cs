@@ -124,6 +124,7 @@ public class Enemy : MonoBehaviour, IEnemy
     }
 
     public void takeDamage(float damage){
+        Debug.Log(damage);
         stat.curHp -= damage;
         //추후에 피격처리 추가
     }

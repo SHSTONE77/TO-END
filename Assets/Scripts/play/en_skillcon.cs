@@ -19,8 +19,6 @@ public class en_skillcon : MonoBehaviour, Iskillcon
     [SerializeField] private SoundObj dashSound;
     [SerializeField] private new AudioSource audio; //스킬소리 제어용
     [SerializeField] private AudioClip footstep;
-    // [SerializeField] private AudioClip footstep;
-    // [SerializeField] private AudioClip footstep;
 
     //애니메이션===============================================
     Rigidbody2D rigid;

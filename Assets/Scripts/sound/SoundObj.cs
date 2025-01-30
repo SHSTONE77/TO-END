@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class SoundObj : MonoBehaviour
 {
-    public AudioSource audio;
+    public AudioSource sound;
 
     private void Awake()
     {
-        TryGetComponent(out audio);
+        TryGetComponent(out sound);
     }
 }
